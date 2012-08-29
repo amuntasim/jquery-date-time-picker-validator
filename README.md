@@ -1,4 +1,3 @@
-
 jQuery date(time)picker validation
 By: Muntasim Ahmed [muntasim@tasawr.com]
 Version 0.0.1
@@ -37,8 +36,9 @@ You have to define the rule in field attribute like:
          dateFormat:'yy-mm-dd',
          buttonImage:"/assets/calender.jpg",
          buttonImageOnly:true,
-         validateBeforeShow: true          <------------ This line needs to be added for the plugin to work
+         validateBeforeShow: true          //This line needs to be added for this plugin to work
      }
    );
+   
   Make sure jquery-datepicker-attrbasedvalidation.js file is included :)	
 
