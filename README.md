@@ -1,7 +1,4 @@
-jQuery date(time)picker validation
-By: Muntasim Ahmed [muntasim@tasawr.com]
-Version 0.0.1
-Last Modified: 29/08/2012
+Attribute based jquery date(time) picker validator.
 
 You have to define the rule in field attribute like:
 <input type="text" class="date"
