@@ -4,7 +4,9 @@
  * Version 0.0.1
  * Last Modified: 29/08/2012
  *
- * You have to define the rule in field attribute like:
+ * You have to define the rule in field attribute:
+ 
+ * The possible combination can have the following rules:
  * <input type="text" class="date"
  *    data-disable-past-date="true"
  *    data-greater-than-field="ANOTHER FILED ID"
@@ -19,6 +21,7 @@
  *    data-eq-date="SOME DATE STRING"
  *    data-not-eq-field="ANOTHER FILED ID"
  *    data-not-eq-date="SOME DATE STRING"
+ *    data-date-difference=1 //number of days difference you need
  *    />
  *
  *    these attributes can be set using jquery like:
@@ -56,7 +59,7 @@
         var updateValidationSettings = function (date, comparison) {
             if (!date)
                 return false;
-
+            var dateDifference = parseInt($(input).data('date-difference'));
             switch (comparison) {
                 case 'eq':
                     dateValidationSettings['minDate'] = date;
@@ -76,10 +79,14 @@
                     break;
                 case 'gt':
                     var tmpDate = date, tmpDateTime = date;
-                    if (tp_inst)
-                        tmpDateTime.setMinutes(tmpDateTime.getMinutes() + 1);
+                    if (tp_inst) {
+                        if (dateDifference > 0)
+                            tmpDateTime.setDate(tmpDateTime.getDate() + dateDifference);
+                        else
+                            tmpDateTime.setMinutes(tmpDateTime.getMinutes() + 1);
+                    }
                     else
-                        tmpDate.setMinutes(tmpDate.getDate() + 1);
+                        tmpDate.setDate(tmpDate.getDate() + (dateDifference > 0 ? dateDifference : 1));
 
                     dateValidationSettings['minDate'] = tmpDate;
                     if (tp_inst)
@@ -94,9 +101,12 @@
                     var tmpDate = date;
                     tmpDateTime = date;
                     if (tp_inst)
-                        tmpDateTime.setMinutes(tmpDateTime.getMinutes() - 1);
+                        if (dateDifference > 0)
+                            tmpDateTime.setDate(tmpDateTime.getDate() - dateDifference);
+                        else
+                            tmpDateTime.setMinutes(tmpDateTime.getMinutes() - 1);
                     else
-                        tmpDate.setMinutes(tmpDate.getDate() - 1);
+                        tmpDate.setDate(tmpDate.getDate() - (dateDifference > 0 ? dateDifference : 1));
 
                     dateValidationSettings['maxDate'] = tmpDate;
                     if (tp_inst)
@@ -140,16 +150,25 @@
                 var dt;
                 if ($('#' + source).is('.hasDatepicker')) {
                     dt = $('#' + source).datepicker('getDate');
+
                 }
                 else {
-                    var field_val = $('#' + source).val();
-                    dt = $.datepicker.parseDate($.datepicker._get(inst, 'dateFormat'),
-                        field_val, $.datepicker._getFormatConfig(inst));
-                                    if (tp_inst) {
-                                        var time = parseTime(source.split(' ')[1]);
-                                        date.setHours(time.getHours());
-                                        date.setMinutes(time.getMinutes());
-                                    }
+                    try {
+                        var field_val = $('#' + source).val();
+                        if (tp_inst) {
+                            dt = $.datepicker.parseDateTime($.datepicker._get(inst, 'dateFormat'), $.datepicker._get(inst, 'timeFormat'),
+                                field_val, $.datepicker._getFormatConfig(inst), tp_inst._defaults)
+                        }
+                        else {
+                            dt = $.datepicker.parseDate($.datepicker._get(inst, 'dateFormat'),
+                                field_val, $.datepicker._getFormatConfig(inst));
+                        }
+
+                    }
+                    catch (err) {
+                        console.log("Error in jquery-datepicker-attrbasedvalidation plugin due to date(time) format")
+                        console.log(err)
+                    }
                 }
 
                 return dt;
