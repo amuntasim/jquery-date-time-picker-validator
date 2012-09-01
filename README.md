@@ -15,7 +15,8 @@ You have to define the rule in field attribute like:
    data-eq-date="SOME DATE STRING"
    data-not-eq-field="ANOTHER FILED ID"
    data-not-eq-date="SOME DATE STRING"
-   />
+   data-date-difference=1 //number of days difference you need
+   
 
    these attributes can be set using jquery like:
    $('item').data("disable-past-date", true) etc....
